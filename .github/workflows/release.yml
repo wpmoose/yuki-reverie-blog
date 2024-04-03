@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: cleanup
+        run: |
+          sudo rm -rf ./.gitignore
+          sudo rm -rf ./.github
+          sudo rm -rf ./.git
+      - name: Get version
+        id: version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: zip
+
+      - name: Install wp-cli
+        run: |
+          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          chmod +x wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp-cli
+
+      - name: Make Pot file
+        run: |
+          wp-cli i18n make-pot . ./languages/yuki-reverie-blog.pot
+
+      - name: Pack release
+        env:
+          THEME_VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          sudo zip -r yuki-reverie-blog.zip . -x "style-premium.css"
+          sudo rm -rf ./style.css
+          sudo mv ./style-premium.css ./style.css
+          sudo zip -r yuki-reverie-blog-premium.zip . -x "yuki-reverie-blog.zip"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Free Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./yuki-reverie-blog.zip
+          asset_name: yuki-reverie-blog.zip
+          asset_content_type: application/zip
+
+      - name: Upload Premium Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./yuki-reverie-blog-premium.zip
+          asset_name: yuki-reverie-blog-premium.zip
+          asset_content_type: application/zip

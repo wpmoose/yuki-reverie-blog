@@ -1,0 +1,25 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+dist
+release
+languages
+.wp-env.json
+php.ini
+
+# misc
+._*
+.DS_Store
+Thumbs.db
+project.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+build-errors.log*
+
+# Editor
+.vscode
+.idea
+
+!.gitkeep
