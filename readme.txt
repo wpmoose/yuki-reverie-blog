@@ -29,6 +29,10 @@ https://stocksnap.io/photo/YYDQ01GHEB
 
 == Changelog ==
 
+= 1.0.1 =
+
+* Fix: Premium template error
+
 = 1.0.0 =
 
 * Hello World!
