@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! defined( 'yuki_reverie_blog_VERSION' ) ) {
 	// Replace the version number of the theme on each release.
-	define( 'yuki_reverie_blog_VERSION', '1.0.1' );
+	define( 'yuki_reverie_blog_VERSION', '1.0.2' );
 }
 
 if ( ! defined( 'yuki_reverie_blog_PATH' ) ) {
